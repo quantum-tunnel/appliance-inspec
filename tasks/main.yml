@@ -1,0 +1,29 @@
+---
+- name: Make /testing path
+  file:
+    state: directory
+    path: /testing
+    owner: root
+    group: root
+- name: Copy tests to /testing
+  copy:
+    src: ../files/
+    dest: /testing/
+    owner: root
+    group: root
+- name: Ensure ruby is installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - ruby
+  - ruby-dev
+  - build-essential
+  - libffi-dev
+- name: Ensure inspec is installed
+  gem:
+    name: inspec
+    state: present
+    user_install: no
+- name: Run inspec tests
+  command: inspec exec /testing
